@@ -1,10 +1,10 @@
 name: Release
 
-# 推送 v* 标签（如 v1.0.1）时云端编译 NetGateShow.exe 并发布 Release；
-# 发布说明取自 release-notes/<标签>.md（没有就用默认一句话）。
+# 推送到 main 时云端编译 NetGateShow.exe；如果 VERSION 里的版本号还没有对应的 tag，
+# 就自动打 tag 并发布 Release（发布说明取自 release-notes/v<版本>.md）。版本号没变的推送只编译、不发布。
 on:
   push:
-    tags: ['v*']
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -25,11 +25,11 @@ jobs:
           name: NetGateShow
           path: NetGateShow.exe
       - name: Release
-        if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="${GITHUB_REF_NAME}"
+          tag="v$(tr -d ' \r\n' < VERSION)"
+          if gh release view "$tag" >/dev/null 2>&1; then echo "$tag 已发布，跳过"; exit 0; fi
           notes="release-notes/${tag}.md"
           [ -f "$notes" ] || { echo "NetGateShow ${tag}" > /tmp/n.md; notes=/tmp/n.md; }
-          gh release create "$tag" NetGateShow.exe --title "NetGateShow ${tag}" --notes-file "$notes"
+          gh release create "$tag" NetGateShow.exe --target "$GITHUB_SHA" --title "NetGateShow ${tag}" --notes-file "$notes"
