@@ -63,6 +63,10 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags "-H windowsg
 python3 mkres.py rsrc_windows_amd64.syso app.ico
 ```
 
+发布：推送 `v*` 标签（如 `git tag v1.0.2 && git push origin v1.0.2`），GitHub Actions 会在云端编译 `NetGateShow.exe` 并创建 Release，发布说明取自 `release-notes/<标签>.md`。
+
+注意：`win32.go` 里包装 Windows 调用的 `call()` 必须带 `//go:uintptrescapes`，否则传给 Windows 的局部变量地址可能在栈搬家后失效，导致偶尔崩溃（v1.0.1 修复）。
+
 ## 文件说明
 
 - `main.go`：窗口、绘制、菜单、配置
