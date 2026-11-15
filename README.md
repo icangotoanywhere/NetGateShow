@@ -16,7 +16,7 @@
 
 ## 适用的上网方式
 
-它向公网 IP 查询服务（ip-api.com，备用 ipwho.is、ipinfo.io）发请求，所以测到的就是实际出口，不依赖任何特定代理软件：
+它向公网 IP 查询服务（ipwho.is，备用 ip-api.com、ipinfo.io）发请求，所以测到的就是实际出口，不依赖任何特定代理软件：
 
 - **直连**：显示运营商出口
 - **VPN / TUN 模式**（WireGuard、OpenVPN、v2rayN / sing-box / Clash 的 TUN 等）：自动生效

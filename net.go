@@ -235,7 +235,9 @@ func provIPInfo(c *http.Client) (NetInfo, error) {
 
 func runCheck(useSys bool, custom string) CheckResult {
 	c, via := makeClient(useSys, custom)
-	provs := []func(*http.Client) (NetInfo, error){provIPAPI, provIPWho, provIPInfo}
+	// ipwho.is 放在最前：2026-11 实测，一个实际在日本的节点，ip-api.com 按 IP 的登记信息报成香港，
+	// ipwho.is 报的是东京，和经该节点测到各地机房的延迟一致。ip-api.com、ipinfo.io 作备用
+	provs := []func(*http.Client) (NetInfo, error){provIPWho, provIPAPI, provIPInfo}
 	var lastErr error
 	for i, p := range provs {
 		t0 := time.Now()
